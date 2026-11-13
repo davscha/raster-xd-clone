@@ -1,6 +1,7 @@
 package de.davscha.raster.ui
 
 import android.content.Context
+import android.content.res.Configuration
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -17,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -26,6 +28,7 @@ import de.davscha.raster.io.Exporter
 import de.davscha.raster.io.ProjectStore
 import de.davscha.raster.io.RasterJson
 import de.davscha.raster.settings.AppSettings
+import de.davscha.raster.settings.LayoutMode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -149,14 +152,22 @@ fun RasterApp(settings: AppSettings) {
         }
     }
 
-    RasterTheme {
+    // „Automatisch“: Querformat Studio, Hochformat Schwebend
+    val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val layout = when (settings.layout) {
+        LayoutMode.AUTO -> if (landscape) LayoutMode.STUDIO else LayoutMode.FLOATING
+        else -> settings.layout
+    }
+    val floating = layout == LayoutMode.FLOATING
+
+    RasterTheme(floating) {
         Box(
             Modifier
                 .fillMaxSize()
-                .background(RasterColors.StudioBackground)
+                .background(if (floating) RasterColors.FloatingBackground else RasterColors.StudioBackground)
                 .windowInsetsPadding(WindowInsets.safeDrawing),
         ) {
-            StudioLayout(state, actions)
+            if (floating) FloatingLayout(state, actions) else StudioLayout(state, actions)
             state.previewStart?.let { start ->
                 PreviewOverlay(state, start) { state.previewStart = null }
             }

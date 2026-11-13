@@ -50,7 +50,8 @@ Der Code ist **neu geschrieben** (Davids Wunsch), Aussehen und Bedienung sind ab
 | `io/ProjectStore.kt` | Speichern/Öffnen über die Dateiauswahl, Autosave `filesDir/autosave.raster` |
 | `io/Exporter.kt` | PNG/JPG nach `Bilder/Raster` |
 | `ui/RasterApp.kt` | Dateiauswahl, Autosave (20 s und bei `ON_STOP`), Dialoge, Vorschau |
-| `ui/StudioLayout.kt` | Kopfzeile, Werkzeugleiste links, Arbeitsfläche, Fenster rechts |
+| `ui/StudioLayout.kt` | Kopfzeile, Werkzeugleiste links, Arbeitsfläche, Fenster rechts; dazu `ToolButtons` und `ComponentEditBar` |
+| `ui/FloatingLayout.kt` | Vollbild mit schwebenden Leisten und verschiebbarem Fenster |
 | `ui/CanvasView.kt` | Arbeitsfläche, Overlays (Auswahl, Anfasser, Hilfslinien, Verbindungspfeile) und **alle Gesten** |
 | `ui/Panels.kt` | Reiter Ebenen/Bausteine/Komponenten, Eigenschaften, Prototyp-Fenster |
 | `ui/Preview.kt` | Vollbild-Vorschau mit Übergängen (`AnimatedContent`) |
@@ -76,21 +77,20 @@ Der Code ist **neu geschrieben** (Davids Wunsch), Aussehen und Bedienung sind ab
 - Eigene Kurven nie mit `addOval`/`addRoundRect` bauen, wenn sie je zurückgelesen werden (Conic-Fehler auf Android 14+). Raster zeichnet nur, liest nichts zurück, daher hier unkritisch.
 - Dateiauswahl mit MIME `application/octet-stream`, sonst hängt Android `.json` an.
 
-## Stand (Version 0.2.0)
+## Stand (Version 0.3.0)
 
 Alles aus der README ist geschrieben, aber **noch nie live geprüft**. Bekannte Lücken und Verdächtiges:
 
-- Nur das **Studio-Layout**. Ein Schwebend-Layout wie in Lasur/Kontur fehlt noch. Die Kopfzeile ist im Hochformat eng.
+- Zwei Layouts: `StudioLayout` und `FloatingLayout` (Einstellung `layout`, Standard Automatisch). Beide nutzen `SidePanel`, `ToolButtons` und `ComponentEditBar`. Das Schwebend-Fenster ist verschiebbar (`panelPos`), doppelt tippen auf die Kopfzeile setzt es zurück. Im Hochformat prüfen, ob sich die Leisten überlappen.
 - Keine Drehung von Elementen (für UI selten nötig), keine Gruppen.
 - Instanzen werden beim Skalieren verzerrt (einfaches Strecken, kein Responsive Resize).
-- Vorschau: Schalter, Checkbox, Slider und Eingabefeld-Fokus sind bedienbar (`LiveState` im Renderer, Werte gelten nur in der Vorschau). Tippen ins Eingabefeld zeigt nur den Fokus, Tippen von Text geht noch nicht. Bausteine in Instanzen reagieren nicht einzeln.
+- Vorschau: Schalter, Checkbox, Slider und Eingabefeld-Fokus sind bedienbar (`LiveState` im Renderer, Werte gelten nur in der Vorschau). Eingabefelder nehmen über ein unsichtbares `BasicTextField` Tastatureingaben an (`LiveState.texts`). Bausteine in Instanzen reagieren nicht einzeln.
 - Ziehen aus der Bibliothek auf die Arbeitsfläche gibt es nicht, Antippen setzt in die Mitte.
 - Prüfen: Einrasten beim Skalieren mit mehreren Elementen, Screen-Titel-Treffer bei starkem Zoom, Rückgängig während Komponenten-Bearbeitung, Export mit sehr großen Screens (Tab S9+ in 3×), Autosave/Wiederherstellen.
 
 ## Ideen für später (grob nach Priorität)
 
-1. Schwebend-Layout
-2. Wiederholungsraster (Repeat Grid) und Abstände zwischen Elementen anzeigen
-3. Bilder einfügen (Galerie/Kamera), Icons-Bibliothek
-4. Zustände für Komponenten (z. B. Knopf normal/gedrückt), Hover/Tippen in der Vorschau
-5. Export als SVG/PDF, Übernahme von Elementen aus Kontur
+1. Wiederholungsraster (Repeat Grid) und Abstände zwischen Elementen anzeigen
+2. Bilder einfügen (Galerie/Kamera), Icons-Bibliothek
+3. Zustände für Komponenten (z. B. Knopf normal/gedrückt), Hover/Tippen in der Vorschau
+4. Export als SVG/PDF, Übernahme von Elementen aus Kontur

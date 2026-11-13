@@ -5,18 +5,20 @@ Teil der kleinen Kreativ-Suite mit **Lasur** (Pixel) und **Kontur** (Vektor), gl
 
 **Neueste APK:** https://github.com/davscha/raster-xd-clone/releases/latest/download/Raster.apk
 
-## Was geht (Version 0.2.0)
+## Was geht (Version 0.3.0)
 
 - **Screens:** mehrere Zeichenflächen nebeneinander, Vorlagen (Tablet, Tab S9+, Handy, Desktop), Screen-Werkzeug zum Aufziehen, Titel ziehen verschiebt einen Screen
 - **Grundformen:** Rechteck (mit Eckenradius), Ellipse, Linie, Text mit Umbruch
 - **UI-Bausteine:** Knopf, Eingabefeld, Slider, Schalter, Checkbox, Liste, Karte, Navigationsleiste – alles über Parameter änderbar (Text, Farben, Radius, Wert, Zustand)
 - **Komponenten:** aus der Auswahl erstellen, Instanzen einfügen, Komponente bearbeiten (alle Instanzen ändern sich mit), Texte und Farben pro Instanz überschreiben, Instanz lösen
 - **Prototyp:** Element antippen, orangen Punkt auf einen Screen ziehen. Übergänge: Sofort, Überblenden, Schieben, Von unten. Ziel „Zurück“. Start-Screen festlegen
-- **Vorschau:** Vollbild, durchtippen, Zurück-Taste. Bausteine reagieren: Schalter und Checkboxen umlegen, Slider ziehen, Eingabefeld bekommt Fokus (blauer Rahmen, Schreibmarke), Knöpfe und verbundene Elemente zeigen den gedrückten Zustand. Tippen daneben lässt alle Hotspots kurz blau aufleuchten
+- **Vorschau:** Vollbild, durchtippen, Zurück-Taste. Bausteine reagieren: Schalter und Checkboxen umlegen, Slider ziehen, Eingabefeld bekommt Fokus (blauer Rahmen, Schreibmarke) und lässt sich mit der Tastatur beschreiben, Knöpfe und verbundene Elemente zeigen den gedrückten Zustand. Tippen daneben lässt alle Hotspots kurz blau aufleuchten
 - Auswahl, Mehrfachauswahl, Auswahlrechteck mit dem Stift, Verschieben und Skalieren mit Einrasten (Hilfslinien), X/Y/B/H als Zahl, Ausrichten, Anordnen, Duplizieren, Kopieren/Einfügen, Ebenenliste mit Sichtbarkeit und Sperren
 - Rückgängig/Wiederholen, `.raster` speichern und öffnen (lesbares JSON), automatische Sicherung, Export PNG/JPG nach „Bilder/Raster“
 
 ## Bedienung
+
+- Zwei Oberflächen wie in Lasur und Kontur: **Studio** (feste Leisten) und **Schwebend** (Vollbild, verschiebbares Fenster). Standard „Automatisch“: quer Studio, hoch Schwebend. Umschalten in den Einstellungen.
 
 - **Stift** zeichnet und zieht Auswahlrechtecke auf, **Finger** verschieben und zoomen die Ansicht.
 - Antippen wählt aus (Stift und Finger). Verschieben geht nur mit bereits Ausgewähltem.

@@ -190,8 +190,8 @@ fun Pill(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        color = RasterColors.StudioPanel,
-        border = BorderStroke(1.dp, RasterColors.StudioLine),
+        color = RasterColors.FloatingPill,
+        border = BorderStroke(1.dp, RasterColors.FloatingLine),
     ) {
         Box(Modifier.padding(4.dp)) { content() }
     }

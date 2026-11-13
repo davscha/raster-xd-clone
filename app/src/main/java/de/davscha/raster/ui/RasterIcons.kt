@@ -79,6 +79,8 @@ object RasterIcons {
     val EyeOff by lazy { icon("eyeOff", "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z", "M3 3l18 18") }
     val Lock by lazy { icon("lock", "M5 11h14v10H5z", "M8 11V7a4 4 0 0 1 8 0v4") }
     val Unlock by lazy { icon("unlock", "M5 11h14v10H5z", "M8 11V7a4 4 0 0 1 7.5-2") }
+    val Grip by lazy { icon("grip", "M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01") }
+    val Layers by lazy { icon("layers", "M12 3l9 5-9 5-9-5 9-5z", "M3 13l9 5 9-5") }
     val Plus by lazy { icon("plus", "M12 5v14M5 12h14") }
     val Close by lazy { icon("close", "M6 6l12 12M18 6L6 18") }
     val Check by lazy { icon("check", "M5 12l5 5 9-10") }

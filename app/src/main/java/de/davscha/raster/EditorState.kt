@@ -68,6 +68,10 @@ class EditorState(val settings: AppSettings) {
         private set
     var tab by mutableStateOf(PanelTab.LAYERS)
 
+    /** Schwebend-Layout: Fenster offen und seine Lage (null = Standardplatz). */
+    var panelOpen by mutableStateOf(true)
+    var panelPos by mutableStateOf<Offset?>(null)
+
     /** Wird gerade eine Komponente bearbeitet? Dann zeigt die Arbeitsfläche nur sie. */
     var editingComponent by mutableStateOf<String?>(null)
         private set

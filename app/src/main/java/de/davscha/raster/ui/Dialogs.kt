@@ -36,6 +36,7 @@ import de.davscha.raster.io.ImageFormat
 import de.davscha.raster.io.RasterJson
 import de.davscha.raster.model.Board
 import de.davscha.raster.model.ScreenPreset
+import de.davscha.raster.settings.LayoutMode
 
 private val palette = listOf(
     0xFF000000, 0xFF1C1D21, 0xFF4A4C54, 0xFF8E909A, 0xFFC7C9D1, 0xFFE9EAEE, 0xFFFFFFFF,
@@ -113,12 +114,17 @@ fun SettingsDialog(state: EditorState, onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         title = { Text("Einstellungen") },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Oberfläche", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    LayoutMode.entries.forEach { m -> Choice(m.label, s.layout == m) { s.layout = m } }
+                }
+                Hint(s.layout.description)
                 LabeledSwitch("Auch mit dem Finger zeichnen", s.fingerDraws) { s.fingerDraws = it }
                 Hint("Aus: Nur der Stift zeichnet und zieht Auswahlrechtecke auf. Finger verschieben und zoomen die Ansicht.")
                 LabeledSwitch("Einrasten", s.snap) { s.snap = it }
                 Hint("Beim Verschieben und Skalieren an Screen-Kanten, Mitten und anderen Elementen ausrichten.")
-                Text("Raster 0.2.0", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Raster 0.3.0", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text("Schließen") } },

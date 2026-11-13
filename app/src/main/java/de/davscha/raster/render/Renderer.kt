@@ -25,6 +25,7 @@ import kotlin.math.min
  */
 class LiveState {
     val values = HashMap<String, Float>()
+    val texts = HashMap<String, String>()
     var focused: String? = null
     var pressed: String? = null
     var hints = false
@@ -110,7 +111,7 @@ class Renderer {
             c.saveLayerAlpha(b, alpha)
         } else c.save()
         c.translate(e.x, e.y)
-        val text = ov?.get("${e.id}.text") ?: e.text
+        val text = live?.texts?.get(e.id) ?: ov?.get("${e.id}.text") ?: e.text
         val fill = ov?.get("${e.id}.fill")?.let { RasterJson.parseColor(it) } ?: e.fill
         val value = live?.values?.get(e.id) ?: e.value
         drawContent(c, e, text, fill, value, doc, depth)

@@ -106,17 +106,7 @@ fun StudioLayout(state: EditorState, actions: EditorActions) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                val design = state.mode == Mode.DESIGN
-                ToolButton(RasterIcons.Select, "Auswahl", selected = state.tool == Tool.SELECT) { state.selectTool(Tool.SELECT) }
-                ToolButton(RasterIcons.Rect, "Rechteck", enabled = design, selected = state.tool == Tool.RECT) { state.selectTool(Tool.RECT) }
-                ToolButton(RasterIcons.Ellipse, "Ellipse", enabled = design, selected = state.tool == Tool.ELLIPSE) { state.selectTool(Tool.ELLIPSE) }
-                ToolButton(RasterIcons.Line, "Linie", enabled = design, selected = state.tool == Tool.LINE) { state.selectTool(Tool.LINE) }
-                ToolButton(RasterIcons.TextTool, "Text", enabled = design, selected = state.tool == Tool.TEXT) { state.selectTool(Tool.TEXT) }
-                ToolButton(
-                    RasterIcons.Screen, "Screen",
-                    enabled = design && state.editingComponent == null,
-                    selected = state.tool == Tool.SCREEN,
-                ) { state.selectTool(Tool.SCREEN) }
+                ToolButtons(state)
                 Spacer(Modifier.weight(1f))
                 ToolButton(RasterIcons.Multi, "Mehrfachauswahl", selected = state.multiSelect) { state.multiSelect = !state.multiSelect }
             }
@@ -125,20 +115,7 @@ fun StudioLayout(state: EditorState, actions: EditorActions) {
             // Arbeitsfläche
             Box(Modifier.weight(1f).fillMaxHeight()) {
                 RasterCanvas(state, Modifier.fillMaxSize())
-                val comp = state.editingComponent?.let { state.doc.component(it) }
-                if (comp != null) {
-                    ContextBar(Modifier.align(Alignment.BottomCenter).padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(RasterIcons.Component, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface)
-                            Text(
-                                "Komponente „${comp.name}“ bearbeiten",
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(horizontal = 12.dp),
-                            )
-                            Button(onClick = { state.finishComponentEdit() }) { Text("Fertig") }
-                        }
-                    }
-                }
+                ComponentEditBar(state, Modifier.align(Alignment.BottomCenter).padding(16.dp))
             }
             VerticalDivider(color = RasterColors.StudioLine)
 
@@ -156,4 +133,37 @@ fun StudioLayout(state: EditorState, actions: EditorActions) {
             }
         }
     }
+}
+
+/** Leiste unten, solange eine Komponente bearbeitet wird. */
+@Composable
+fun ComponentEditBar(state: EditorState, modifier: Modifier = Modifier) {
+    val comp = state.editingComponent?.let { state.doc.component(it) } ?: return
+    ContextBar(modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(RasterIcons.Component, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface)
+            Text(
+                "Komponente „${comp.name}“ bearbeiten",
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(horizontal = 12.dp),
+            )
+            Button(onClick = { state.finishComponentEdit() }) { Text("Fertig") }
+        }
+    }
+}
+
+/** Werkzeuge in der Reihenfolge der XD-Werkzeugleiste. */
+@Composable
+fun ToolButtons(state: EditorState) {
+    val design = state.mode == Mode.DESIGN
+    ToolButton(RasterIcons.Select, "Auswahl", selected = state.tool == Tool.SELECT) { state.selectTool(Tool.SELECT) }
+    ToolButton(RasterIcons.Rect, "Rechteck", enabled = design, selected = state.tool == Tool.RECT) { state.selectTool(Tool.RECT) }
+    ToolButton(RasterIcons.Ellipse, "Ellipse", enabled = design, selected = state.tool == Tool.ELLIPSE) { state.selectTool(Tool.ELLIPSE) }
+    ToolButton(RasterIcons.Line, "Linie", enabled = design, selected = state.tool == Tool.LINE) { state.selectTool(Tool.LINE) }
+    ToolButton(RasterIcons.TextTool, "Text", enabled = design, selected = state.tool == Tool.TEXT) { state.selectTool(Tool.TEXT) }
+    ToolButton(
+        RasterIcons.Screen, "Screen",
+        enabled = design && state.editingComponent == null,
+        selected = state.tool == Tool.SCREEN,
+    ) { state.selectTool(Tool.SCREEN) }
 }

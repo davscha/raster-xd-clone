@@ -21,6 +21,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -107,6 +119,33 @@ fun PreviewOverlay(state: EditorState, startId: String, onClose: () -> Unit) {
         ) { visit ->
             val b = doc.screen(visit.screen)
             if (b != null) PreviewScreen(state, b, live, tick, onChange = { tick++ }, onHint = { flashHints() }) { follow(it) }
+        }
+        // Eingabefeld mit Fokus: unsichtbares Textfeld nimmt die Tastatur entgegen
+        tick.let { }
+        val focusedId = live.focused
+        if (focusedId != null) {
+            val requester = remember { FocusRequester() }
+            val keyboard = LocalSoftwareKeyboardController.current
+            val current = live.texts[focusedId]
+                ?: doc.screens.firstNotNullOfOrNull { b -> b.children.firstOrNull { it.id == focusedId } }?.text ?: ""
+            BasicTextField(
+                value = TextFieldValue(current, TextRange(current.length)),
+                onValueChange = {
+                    live.texts[focusedId] = it.text
+                    tick++
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = {
+                    live.focused = null
+                    tick++
+                }),
+                modifier = Modifier.size(1.dp).alpha(0f).focusRequester(requester),
+            )
+            LaunchedEffect(focusedId) {
+                requester.requestFocus()
+                keyboard?.show()
+            }
         }
         Row(
             Modifier.align(Alignment.TopStart).padding(12.dp),

@@ -12,19 +12,23 @@ object RasterColors {
     val StudioLine = Color(0xFF34353B)
     val Accent = Color(0xFF3B7CF0)
     val Prototype = Color(0xFFFF8A4C)
+    val FloatingBackground = Color(0xFF121214)
+    val FloatingPill = Color(0xEE222226)
+    val FloatingLine = Color(0xFF2F2F35)
+    val FloatingSurface = Color(0xFF222226)
     val Text = Color(0xFFE6E6E9)
     val Muted = Color(0xFFA4A5AD)
 }
 
 @Composable
-fun RasterTheme(content: @Composable () -> Unit) {
+fun RasterTheme(floating: Boolean = false, content: @Composable () -> Unit) {
     val scheme = darkColorScheme(
         primary = RasterColors.Accent,
         onPrimary = Color.White,
         secondary = RasterColors.Prototype,
         onSecondary = Color(0xFF1A1A1A),
-        background = RasterColors.StudioBackground,
-        surface = RasterColors.StudioPanel,
+        background = if (floating) RasterColors.FloatingBackground else RasterColors.StudioBackground,
+        surface = if (floating) RasterColors.FloatingSurface else RasterColors.StudioPanel,
         surfaceVariant = Color(0xFF2E2F35),
         surfaceContainerHigh = Color(0xFF2A2B31),
         onSurface = RasterColors.Text,
