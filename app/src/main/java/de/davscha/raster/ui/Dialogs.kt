@@ -118,7 +118,7 @@ fun SettingsDialog(state: EditorState, onDismiss: () -> Unit) {
                 Hint("Aus: Nur der Stift zeichnet und zieht Auswahlrechtecke auf. Finger verschieben und zoomen die Ansicht.")
                 LabeledSwitch("Einrasten", s.snap) { s.snap = it }
                 Hint("Beim Verschieben und Skalieren an Screen-Kanten, Mitten und anderen Elementen ausrichten.")
-                Text("Raster 0.1.0", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Raster 0.2.0", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text("Schließen") } },

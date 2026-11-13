@@ -20,6 +20,17 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
+ * Zustand der Vorschau: Werte, die beim Bedienen geändert wurden (Schalter, Slider),
+ * das Eingabefeld mit Fokus, das gerade gedrückte Element und das kurze Aufleuchten der Hotspots.
+ */
+class LiveState {
+    val values = HashMap<String, Float>()
+    var focused: String? = null
+    var pressed: String? = null
+    var hints = false
+}
+
+/**
  * Zeichnet Screens, Komponenten und Elemente für Bildschirm, Vorschau und PNG-Export.
  * Alle UI-Bausteine entstehen hier aus ihren Parametern (Text, Farben, Radius, Wert).
  */
@@ -63,7 +74,7 @@ class Renderer {
     fun textHeight(e: Element): Float =
         layout(e.text.ifEmpty { " " }, e.textSize, e.textColor, e.bold, abs(e.w).toInt(), e.align).height.toFloat()
 
-    fun drawBoard(c: Canvas, b: Board, doc: Document, background: Boolean = true) {
+    fun drawBoard(c: Canvas, b: Board, doc: Document, background: Boolean = true, live: LiveState? = null) {
         c.save()
         c.translate(b.x, b.y)
         c.clipRect(0f, 0f, b.w, b.h)
@@ -71,7 +82,7 @@ class Renderer {
             fillP.color = it
             c.drawRect(0f, 0f, b.w, b.h, fillP)
         }
-        drawElements(c, b.children, doc, null, 0)
+        drawElements(c, b.children, doc, null, 0, live)
         c.restore()
     }
 
@@ -86,11 +97,11 @@ class Renderer {
         c.restore()
     }
 
-    fun drawElements(c: Canvas, list: List<Element>, doc: Document, ov: Map<String, String>?, depth: Int) {
-        for (e in list) if (e.visible) drawElement(c, e, doc, ov, depth)
+    fun drawElements(c: Canvas, list: List<Element>, doc: Document, ov: Map<String, String>?, depth: Int, live: LiveState? = null) {
+        for (e in list) if (e.visible) drawElement(c, e, doc, ov, depth, live)
     }
 
-    fun drawElement(c: Canvas, e: Element, doc: Document, ov: Map<String, String>? = null, depth: Int = 0) {
+    fun drawElement(c: Canvas, e: Element, doc: Document, ov: Map<String, String>? = null, depth: Int = 0, live: LiveState? = null) {
         val alpha = (e.opacity * 255).toInt().coerceIn(0, 255)
         if (alpha == 0) return
         val count = if (alpha < 255) {
@@ -101,11 +112,43 @@ class Renderer {
         c.translate(e.x, e.y)
         val text = ov?.get("${e.id}.text") ?: e.text
         val fill = ov?.get("${e.id}.fill")?.let { RasterJson.parseColor(it) } ?: e.fill
-        drawContent(c, e, text, fill, doc, depth)
+        val value = live?.values?.get(e.id) ?: e.value
+        drawContent(c, e, text, fill, value, doc, depth)
+        if (live != null) drawLive(c, e, text, live)
         c.restoreToCount(count)
     }
 
-    private fun drawContent(c: Canvas, e: Element, text: String, fill: Int?, doc: Document, depth: Int) {
+    /** Rückmeldung in der Vorschau: Fokus im Eingabefeld, gedrückter Zustand, Hotspots. */
+    private fun drawLive(c: Canvas, e: Element, text: String, live: LiveState) {
+        val w = e.w
+        val h = e.h
+        rect.set(min(0f, w), min(0f, h), max(0f, w), max(0f, h))
+        val rr = if (e.kind.hasRadius) e.radius.coerceIn(0f, min(rect.width(), rect.height()) / 2f) else 0f
+        if (live.focused == e.id && e.kind == Kind.INPUT) {
+            strokeP.color = Element.ACCENT
+            strokeP.strokeWidth = 2.5f
+            rect.inset(1.25f, 1.25f)
+            c.drawRoundRect(rect, rr, rr, strokeP)
+            // Schreibmarke hinter dem Text
+            val tw = if (text.isEmpty()) 0f else layout(text, e.textSize, e.textColor, e.bold, (w - 28f).toInt().coerceAtLeast(1), e.align).getLineWidth(0)
+            strokeP.strokeWidth = 2f
+            c.drawLine(14f + tw + 2f, h * 0.28f, 14f + tw + 2f, h * 0.72f, strokeP)
+            rect.set(min(0f, w), min(0f, h), max(0f, w), max(0f, h))
+        }
+        if (live.pressed == e.id) {
+            fillP.color = 0x26000000
+            if (e.kind == Kind.ELLIPSE) c.drawOval(rect, fillP) else c.drawRoundRect(rect, rr, rr, fillP)
+        }
+        if (live.hints && e.link != null) {
+            fillP.color = 0x403B7CF0
+            c.drawRoundRect(rect, rr, rr, fillP)
+            strokeP.color = Element.ACCENT
+            strokeP.strokeWidth = 2f
+            c.drawRoundRect(rect, rr, rr, strokeP)
+        }
+    }
+
+    private fun drawContent(c: Canvas, e: Element, text: String, fill: Int?, value: Float, doc: Document, depth: Int) {
         val w = e.w
         val h = e.h
         when (e.kind) {
@@ -141,7 +184,7 @@ class Renderer {
                 val track = max(4f, h * 0.16f)
                 val x0 = r
                 val x1 = (w - r).coerceAtLeast(x0)
-                val kx = x0 + (x1 - x0) * e.value.coerceIn(0f, 1f)
+                val kx = x0 + (x1 - x0) * value.coerceIn(0f, 1f)
                 strokeP.strokeCap = Paint.Cap.ROUND
                 strokeP.strokeWidth = track
                 strokeP.color = e.stroke ?: Element.LINE_GRAY
@@ -158,7 +201,7 @@ class Renderer {
                 c.drawCircle(kx, cy, r - 0.75f, strokeP)
             }
             Kind.SWITCH -> {
-                val on = e.on
+                val on = value >= 0.5f
                 box(c, w, h, h / 2f, if (on) fill ?: Element.ACCENT else e.stroke ?: Element.LINE_GRAY, null, 0f, false)
                 val r = h / 2f - 3f
                 fillP.color = Element.WHITE
@@ -168,7 +211,7 @@ class Renderer {
             }
             Kind.CHECKBOX -> {
                 val s = h
-                if (e.on) {
+                if (value >= 0.5f) {
                     box(c, s, s, s * 0.2f, fill ?: Element.ACCENT, null, 0f, false)
                     path.reset()
                     path.moveTo(s * 0.25f, s * 0.52f)

@@ -76,14 +76,14 @@ Der Code ist **neu geschrieben** (Davids Wunsch), Aussehen und Bedienung sind ab
 - Eigene Kurven nie mit `addOval`/`addRoundRect` bauen, wenn sie je zurückgelesen werden (Conic-Fehler auf Android 14+). Raster zeichnet nur, liest nichts zurück, daher hier unkritisch.
 - Dateiauswahl mit MIME `application/octet-stream`, sonst hängt Android `.json` an.
 
-## Stand (Version 0.1.0)
+## Stand (Version 0.2.0)
 
 Alles aus der README ist geschrieben, aber **noch nie live geprüft**. Bekannte Lücken und Verdächtiges:
 
 - Nur das **Studio-Layout**. Ein Schwebend-Layout wie in Lasur/Kontur fehlt noch. Die Kopfzeile ist im Hochformat eng.
 - Keine Drehung von Elementen (für UI selten nötig), keine Gruppen.
 - Instanzen werden beim Skalieren verzerrt (einfaches Strecken, kein Responsive Resize).
-- Bausteine sind in der Vorschau nicht bedienbar (Schalter umlegen o. Ä.), nur Verbindungen.
+- Vorschau: Schalter, Checkbox, Slider und Eingabefeld-Fokus sind bedienbar (`LiveState` im Renderer, Werte gelten nur in der Vorschau). Tippen ins Eingabefeld zeigt nur den Fokus, Tippen von Text geht noch nicht. Bausteine in Instanzen reagieren nicht einzeln.
 - Ziehen aus der Bibliothek auf die Arbeitsfläche gibt es nicht, Antippen setzt in die Mitte.
 - Prüfen: Einrasten beim Skalieren mit mehreren Elementen, Screen-Titel-Treffer bei starkem Zoom, Rückgängig während Komponenten-Bearbeitung, Export mit sehr großen Screens (Tab S9+ in 3×), Autosave/Wiederherstellen.
 
