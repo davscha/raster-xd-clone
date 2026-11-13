@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="raster_background">#FF1C1D21</color>
+    <color name="ic_launcher_background">#FF26272C</color>
+
+    <style name="Theme.Raster" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/raster_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>
